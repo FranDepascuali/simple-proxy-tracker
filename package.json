@@ -8,8 +8,15 @@
     "dev": "tsx src/index.ts --outDir dist --watch",
     "test": "npm run build; vitest --run"
   },
+  "dependencies": {
+    "express": "^4.21.2",
+    "express-basic-auth": "^1.2.1",
+    "http-proxy-middleware": "^3.0.3"
+  },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "6.19.0",
     "@typescript-eslint/parser": "6.19.0",
     "eslint": "8.56.0",

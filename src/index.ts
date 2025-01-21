@@ -1,37 +1,28 @@
-// This file is meant to be deleted when you clone the project
-// Sample TypeScript index.ts content
-import { User } from './interfaces.js'
+import { Environment } from '@src/environment.js'
+import { MetricsService } from '@src/services/metrics-service.js'
+import { ProxyService } from '@src/services/proxy-service.js'
+import { ShutdownService } from '@src/services/shutdown-service.js'
+import express, { NextFunction, Request, Response } from 'express'
 
-class Greeter {
-  greeting: string
+const app = express()
 
-  constructor(message: string) {
-    this.greeting = message
+app.get('/metrics', (request: Request, response: Response) => {
+  response.json(MetricsService.getMetrics())
+})
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.path === '/metrics') {
+    return next()
   }
 
-  greet() {
-    return 'Hello, ' + this.greeting
-  }
-}
+  return ProxyService.createProxyHandler(req, res, next)
+})
 
-function sum(a: number, b: number): number {
-  return a + b
-}
+ShutdownService.onShutdown(() => {
+  console.log('\nShutting down proxy server...')
+  MetricsService.printReport()
+})
 
-const printUser = (user: User): void => {
-  console.log(`User ID: ${user.id}`)
-  console.log(`Username: ${user.username}`)
-  console.log(`Email: ${user.email}`)
-}
-
-const user: User = {
-  id: 1,
-  username: 'johndoe',
-  email: 'john.doe@example.com',
-}
-
-const greeter = new Greeter('world')
-
-console.log(greeter.greet())
-printUser(user)
-console.log(`The sum of 5 and 3 is ${sum(5, 3)}`)
+app.listen(Environment.PORT, () => {
+  console.log(`Proxy server running on port ${Environment.PORT}`)
+})
