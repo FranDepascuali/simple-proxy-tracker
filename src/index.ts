@@ -4,6 +4,8 @@ import { ProxyService } from '@src/services/proxy-service.js'
 import { ShutdownService } from '@src/services/shutdown-service.js'
 import express, { NextFunction, Request, Response } from 'express'
 
+Environment.validate()
+
 const app = express()
 
 app.get('/metrics', (request: Request, response: Response) => {
@@ -21,6 +23,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 ShutdownService.onShutdown(() => {
   console.log('\nShutting down proxy server...')
   MetricsService.printReport()
+  process.exit(0)
 })
 
 app.listen(Environment.PORT, () => {

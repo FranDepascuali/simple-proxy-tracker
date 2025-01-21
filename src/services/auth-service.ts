@@ -1,3 +1,4 @@
+import { Environment } from '@src/environment.js'
 import { Request, Response } from 'express'
 
 export namespace Auth {
@@ -23,7 +24,10 @@ export namespace Auth {
         .toString()
         .split(':')
 
-      if (username === 'username' && password === 'password') {
+      if (
+        username === Environment.PROXY_USERNAME &&
+        password === Environment.PROXY_PASSWORD
+      ) {
         return true
       }
 
